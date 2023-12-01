@@ -1,11 +1,5 @@
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+Poc para testes e estudos nextjs
+
 Lembre-se: react > componentes funcionais > composition pattern.
 
 Respeite as camadas:

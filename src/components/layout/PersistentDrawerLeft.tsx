@@ -19,6 +19,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import Link from 'next/link';
 
 const drawerWidth = 240;
 
@@ -126,13 +127,15 @@ export default function PersistentDrawerLeft({
         </DrawerHeader>
         <Divider />
         <List>
-          {['Home', 'Pessoas', ].map((text, index) => (
-            <ListItem key={text} disablePadding>
+          {[['Home','/'], ['Pessoas', '/pessoa'], ].map((x, index) => (
+            <ListItem key={x[0]} disablePadding>
               <ListItemButton>
                 <ListItemIcon>
                   {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
                 </ListItemIcon>
-                <ListItemText primary={text} />
+                <Link href={x[1]}>
+                  <ListItemText primary={x[0]} />
+                </Link>                
               </ListItemButton>
             </ListItem>
           ))}

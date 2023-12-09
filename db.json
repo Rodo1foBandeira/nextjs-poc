@@ -1,8 +1,8 @@
 {
-    "repos":[
-        { "name": "Rodolfo"},
-        { "name": "hahaha hahhaha"},
-        { "name": "kkkkk hahhaha"},
-        { "name": "hahaha kkkkk"}
+    "pessoa":[
+        { "id": 1,"nome": "Rodolfo"},
+        { "id": 2,"nome": "dsdsgsgds"},
+        { "id": 3,"nome": "kkkkk jjj" },
+        { "id": 4,"nome": "hahaha ddfdsfsd"}
     ]
 }

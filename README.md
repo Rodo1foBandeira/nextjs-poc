@@ -12,3 +12,8 @@ Respeite as camadas:
         https://nextjs.org/docs/app/api-reference/file-conventions
       |_components abstratos/genericos
       |_services consumo de apis
+
+
+Pontos de atenção:
+  Route Segment Config: Não extende para subpastas e filhos, por exemplo no app/layout.tsx
+  Revalidate itermitente quando run dev, buildava e dava start para testar melhor.

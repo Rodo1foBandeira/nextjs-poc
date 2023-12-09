@@ -1,10 +1,16 @@
-import { getRepos } from '../../services/github'
+import { getPessoas } from '@/services/pessoa'
+import { Pessoa } from '@/models/pessoa';
 
-export default async function Pessoa(){
-    const tst:any[] = await getRepos();
+//export const dynamic = 'force-dynamic';
+export const revalidate = 10;
+// export const fetchCache = 'force-no-store';
+// export const runtime = 'edge';
+
+export default async function Pessoas(){
+  const pessoas = await getPessoas();
     return (
         <ul>
-            { tst.map(x => (<li key={x.name}>{x.name}</li>))}
+            { pessoas.map(x => (<li key={x.nome}><a href={`/pessoa/${x.id}`}>{x.nome}</a></li>))}
         </ul>
     )
 }

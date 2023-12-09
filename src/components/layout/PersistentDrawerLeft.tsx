@@ -128,16 +128,16 @@ export default function PersistentDrawerLeft({
         <Divider />
         <List>
           {[['Home','/'], ['Pessoas', '/pessoa'], ].map((x, index) => (
-            <ListItem key={x[0]} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <Link href={x[1]}>
-                  <ListItemText primary={x[0]} />
-                </Link>                
-              </ListItemButton>
-            </ListItem>
+            <Link key={x[0]} href={x[1]}>
+              <ListItem disablePadding>              
+                  <ListItemButton>
+                    <ListItemIcon>
+                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                    </ListItemIcon>                  
+                      <ListItemText primary={x[0]} />                                  
+                  </ListItemButton>              
+              </ListItem>
+            </Link>
           ))}
         </List>        
       </Drawer>

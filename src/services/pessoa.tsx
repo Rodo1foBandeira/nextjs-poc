@@ -1,7 +1,7 @@
 import { Pessoa } from "@/models/pessoa";
 
 export async function getPessoas (): Promise<Pessoa[]> {
-    const reponse = await fetch('http://191.34.115.112:5000/pessoa',
+    const reponse = await fetch(`${process.env.api}/pessoa`,
         {
             //cache: "no-store",
             next: {
@@ -13,7 +13,7 @@ export async function getPessoas (): Promise<Pessoa[]> {
 }
 
 export async function getPessoa (id: number): Promise<Pessoa> {
-    const reponse = await fetch(`http://191.34.115.112:5000/pessoa/${id}`,
+    const reponse = await fetch(`${process.env.api}/pessoa/${id}`,
         {
             next: {
                 revalidate: 8

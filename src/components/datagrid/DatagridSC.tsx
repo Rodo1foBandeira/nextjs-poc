@@ -29,7 +29,7 @@ export default function DatagridSC<T>({
           </TableRow>
         </TableHead>
         <TableBody>
-          {rows?.map((row, ri) => (
+          {rows?.map((row: any, ri) => (
             <TableRow key={`row-${ri}`}>
               {columnsRowsProps.map(({ source, rowProps}, ci) =>
                 (<TableCell key={`row-${ri}-column-${ci}`} {...rowProps}>{row[source]}</TableCell>))}

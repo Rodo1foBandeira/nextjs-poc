@@ -15,7 +15,7 @@ interface IDatagridSCProps<T> {
   props?: Partial<IDatagridProps>;
 }
 
-export default function DatagridSC<T extends Entity>({
+export default function DatagridSC<T>({
   columnsRowsProps, dataSource, props = { defaultRowsPerPage: 5 }
 }: IDatagridSCProps<T>) {
   const rows = dataSource.data;
@@ -31,7 +31,8 @@ export default function DatagridSC<T extends Entity>({
         <TableBody>
           {rows?.map((row, ri) => (
             <TableRow key={`row-${ri}`}>
-              {columnsRowsProps.map(({ source, rowProps}, ci) => (<TableCell key={`row-${ri}-column-${ci}`} {...rowProps}>{row[source]}</TableCell>))}
+              {columnsRowsProps.map(({ source, rowProps}, ci) =>
+                (<TableCell key={`row-${ri}-column-${ci}`} {...rowProps}>{row[source]}</TableCell>))}
             </TableRow>
           ))}
           {rows?.length == 0 && (

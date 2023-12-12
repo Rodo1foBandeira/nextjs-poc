@@ -1,7 +1,7 @@
 import { getPessoas } from '@/services/pessoa'
-import Pessoa from '@/models/Pessoa';
 import Link from 'next/link';
 import DatagridSC from '@/components/datagrid/DatagridSC';
+import Pessoa from '@/models/Pessoa';
 
 export const revalidate = 10;
 

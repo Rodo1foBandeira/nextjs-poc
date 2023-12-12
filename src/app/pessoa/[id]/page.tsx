@@ -1,4 +1,4 @@
-import { Pessoa } from "@/models/pessoa";
+import Pessoa from "@/models/Pessoa";
 import { getPessoa } from "@/services/pessoa"
 
 // export const revalidate = 2;

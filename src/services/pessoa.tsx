@@ -1,4 +1,4 @@
-import { Pessoa } from "@/models/pessoa";
+import Pessoa from "@/models/Pessoa";
 
 export async function getPessoas (): Promise<Pessoa[]> {
     const reponse = await fetch(`${process.env.api}/pessoa`,

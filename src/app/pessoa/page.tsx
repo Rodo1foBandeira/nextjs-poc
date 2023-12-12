@@ -1,16 +1,19 @@
 import { getPessoas } from '@/services/pessoa'
-import { Pessoa } from '@/models/pessoa';
+import Pessoa from '@/models/Pessoa';
+import Link from 'next/link';
+import DatagridSC from '@/components/datagrid/DatagridSC';
 
-//export const dynamic = 'force-dynamic';
-export const revalidate = 0;
-// export const fetchCache = 'force-no-store';
-// export const runtime = 'edge';
+export const revalidate = 10;
 
 export default async function Pessoas(){
-  const pessoas = await getPessoas();
+  const pessoas:Pessoa[] = [ {id: 1, nome: "Rodolfo"}, {id: 2, nome: "Hahaha"} ]
     return (
-        <ul>
-            { pessoas.map(x => (<li key={x.nome}><a href={`/pessoa/${x.id}`}>{x.nome}</a></li>))}
-        </ul>
+        <DatagridSC
+            columnsRowsProps={[
+                { caption: "Id", source:"id" },
+                { caption: "Nome", source:"nome" },
+            ]}
+            dataSource={{data: pessoas}}
+        />
     )
 }

@@ -65,7 +65,7 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
     doFetch(`${url}?offset=${page * rowsPerPage}&limit=${rowsPerPage}`);
   }, [page, rowsPerPage, aditionalQueryParams]);
 
-  const Actions = (row: T) => {
+  const Actions = ({ row }: {row: T}) => {
     if (actions) {
       let buttons: ReactNode[] = [];
       if (actions.view)
@@ -121,7 +121,7 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
             {(row as any)[source]}
           </TableCell>
         ))}
-        <Actions {...row} />
+        <Actions row={row} />
       </TableRow>
     ));
   };

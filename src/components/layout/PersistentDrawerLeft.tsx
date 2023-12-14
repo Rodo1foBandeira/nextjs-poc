@@ -127,7 +127,7 @@ export default function PersistentDrawerLeft({
         </DrawerHeader>
         <Divider />
         <List>
-          {[['Home','/'], ['Pessoas', '/pessoa'], ].map((x, index) => (
+          {[['Home','/'], ['Tickers', '/ticker'],].map((x, index) => (
             <Link key={x[0]} href={x[1]}>
               <ListItem disablePadding>              
                   <ListItemButton>

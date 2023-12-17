@@ -1,13 +1,17 @@
-import DatagridCC from "@/components/datagrid/DatagridCC";
+import DatagridSC from "@/ui/datagrid/DatagridSC";
 import Ativo from "@/models/Ativo";
 
-export const revalidate = 10;
-
-export default async function Tickers() {
+export default async function Tickers({ searchParams } : {
+  searchParams?: {
+  page?: string;
+  limit?: string;
+}
+}) {
   return (
-    <DatagridCC<Ativo>
-      url={"/b3api/Ativo"}
-      columnsRowsProps={[
+    <DatagridSC<Ativo>
+      {...{searchParams}}
+      urlPath="/b3api/Ativo"
+      columnscellsProps={[
         { caption: "Id", source: "id" },
         { caption: "Mercado", source: "mercado" },
         { caption: "Ticker", source: "ticker" },

@@ -4,5 +4,5 @@ export default interface IDatagridCell {
     caption: string,
     source: string,
     columnProps?: TableCellProps,
-    rowProps?: TableCellProps
+    cellProps?: TableCellProps
 }

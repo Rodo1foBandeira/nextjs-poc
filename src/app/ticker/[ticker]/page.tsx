@@ -1,14 +1,15 @@
-import DatagridCC from "@/components/datagrid/DatagridCC";
+import DatagridSC from "@/ui/datagrid/DatagridSC";
 import Ticker from "@/models/Ticker";
 
-export const revalidate = 10;
+export const revalidate = 0;
 
-export default async function Tickers({ params, searchParams }: { params: { ticker: string }; searchParams: { [key: string]: string | string[] | undefined } }) {
+export default async function Tickers({ params, searchParams }: { params: { ticker: string }; searchParams?: { page?: string; limit?: string } }) {
   const { ticker } = params;
   return (
-    <DatagridCC<Ticker>
-      url={`/b3api/Ticker('${ticker}')`}
-      columnsRowsProps={[
+    <DatagridSC<Ticker>
+      {...{searchParams}}
+      urlPath={`/b3api/Ticker('${ticker}')`}
+      columnscellsProps={[
         { caption: "Data", source: "data" },
         { caption: "Minima", source: "minima" },
         { caption: "Abertura", source: "abertura" },

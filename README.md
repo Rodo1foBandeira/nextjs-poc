@@ -6,14 +6,22 @@ Lembre-se: react > componentes funcionais > composition pattern.
 
 ```
 Respeite as camadas:
-    |_src
-      |_app Exclusiva para fins de roteamento
-        https://nextjs.org/docs/app/building-your-application/routing/colocation#store-project-files-outside-of-app
-        https://nextjs.org/docs/app/api-reference/file-conventions
-      |_components abstratos/genericos
-      |_services consumo de apis
+    ├─src
+    |  ├─app // Exclusiva para fins de roteamento
+    |  |  ├─ minhaPagina
+    |  |  |   ├─ page.tsx
+    |  |  |   ├─ actions.ts // Não utilizar diretamente para fins de busca
+    |  ├─ui // componentes abstratos e reutilizáveis
+    |  ├─lib // (1)funções abstratas e reutilizáveis, enums, busca de dados
+    |  |  ├─pages
+    |  |  |  ├─minhaPagina.ts // (1) especificas dela
+    |  |  |  ├─minhaPagina2.ts // (1) especificas dela
+    |  |  ├─utils // (1) geral
+    |  |  ├─enums // geral
+    |  ├─models // Classes e interfaces
 
 
-Pontos de atenção:
-  Route Segment Config: Não extende para subpastas e filhos, por exemplo no app/layout.tsx
-  Revalidate itermitente quando run dev, buildava e dava start para testar melhor.
+Conclusões:
+  Revalidações começam a funcionar depois de 30 segundos.
+  Nas revalidações, mesmo requisitando mostra na tela o dado cacheado
+  loading.tsx na raiz app não replica para subrotas

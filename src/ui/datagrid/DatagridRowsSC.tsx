@@ -63,9 +63,11 @@ export default async function DatagridRowsSC<T>({ columnscellsProps, keySource, 
       }
       return data.map((row, ri) => (
         <TableRow key={`row-${ri}`} sx={{ height: 40.8 }}>
-          {columnscellsProps.map(({ source, cellProps }, ci) => (
-            <TableCell key={`row-${ri}-column-${ci}`} sx={{ padding: 0, paddingLeft: '16px' }} {...cellProps}>
-              {(row as any)[source]}
+          {columnscellsProps.map(({ source, cellProps, cellFormat }, ci) => (
+            <TableCell
+              //align={numeric ? 'right' : 'left'}
+              key={`row-${ri}-column-${ci}`} sx={{ padding: 0, paddingLeft: '16px' }} {...cellProps}>
+              {cellFormat ? cellFormat((row as any)[source]) : (row as any)[source]}
             </TableCell>
           ))}
           <Actions {...{row}} />

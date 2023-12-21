@@ -17,9 +17,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemButton from '@mui/material/ListItemButton';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import InboxIcon from '@mui/icons-material/MoveToInbox';
-import MailIcon from '@mui/icons-material/Mail';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
+import HomeIcon from '@mui/icons-material/Home';
+import TimelineIcon from '@mui/icons-material/Timeline';
+import { title } from 'process';
 
 const drawerWidth = 240;
 
@@ -79,6 +81,7 @@ export default function PersistentDrawerLeft({
   }) {
   const theme = useTheme();
   const [open, setOpen] = React.useState(false);
+  const pathname = usePathname();  
 
   const handleDrawerOpen = () => {
     setOpen(true);
@@ -88,6 +91,11 @@ export default function PersistentDrawerLeft({
     setOpen(false);
   };
 
+  const menu = [
+    { title: 'Home', path: '/', icon:  <HomeIcon />},
+    { title: 'Tickers', path: '/ticker', icon: <TimelineIcon /> },
+  ]
+  
   return (
     <Box sx={{ display: 'flex' }}>
       <CssBaseline />
@@ -103,7 +111,12 @@ export default function PersistentDrawerLeft({
             <MenuIcon />
           </IconButton>
           <Typography variant="h6" noWrap component="div">
-            Persistent drawer
+            {
+              menu.find(m => m.path === pathname)?.title ||
+              pathname[1].toUpperCase() +
+              pathname.split('/')[1].substring(1) + ' ' +
+              pathname.split('/')[2]
+            }
           </Typography>
         </Toolbar>
       </AppBar>
@@ -127,14 +140,14 @@ export default function PersistentDrawerLeft({
         </DrawerHeader>
         <Divider />
         <List>
-          {[['Home','/'], ['Tickers', '/ticker'],].map((x, index) => (
-            <Link key={x[0]} href={x[1]}>
+          {menu.map((m, index) => (
+            <Link key={'menuLink-'+ index} href={m.path}>
               <ListItem disablePadding>              
                   <ListItemButton>
                     <ListItemIcon>
-                      {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
+                      {m.icon}
                     </ListItemIcon>                  
-                      <ListItemText primary={x[0]} />                                  
+                    <ListItemText primary={m.title} />                                  
                   </ListItemButton>              
               </ListItem>
             </Link>

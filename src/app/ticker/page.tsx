@@ -9,7 +9,6 @@ export default async function Tickers({ searchParams } : {
 }) {
   return (
     <DatagridSC<Ativo>
-      {...{searchParams}}
       urlPath="/b3api/Ativo"
       columnscellsProps={[
         { caption: "Id", source: "id" },

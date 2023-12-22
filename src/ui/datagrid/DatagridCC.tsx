@@ -15,10 +15,10 @@ import { SortDirection } from "@mui/material/TableCell";
 import TableSortLabel from "@mui/material/TableSortLabel";
 import { visuallyHidden } from "@mui/utils";
 
-interface IDatagridCCProps {
+interface IDatagridCCProps<T> {
   defaultRowsPerPage?: number; // Never pass as state
   defaultRowsPerPageOptions?: (number | { label: string; value: number })[]; // Never pass as state
-  columnscellsProps: IDatagridCell[];
+  columnscellsProps: IDatagridCell<T>[];
   actions?: boolean;
   children: ReactNode;
   count: number;
@@ -29,7 +29,7 @@ interface IOrder {
   sortDirection: SortDirection;
 }
 
-export default function DatagridCC({ defaultRowsPerPage = 5, defaultRowsPerPageOptions = [5, 10, 20], columnscellsProps, children, count, actions }: IDatagridCCProps) {
+export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPageOptions = [5, 10, 20], columnscellsProps, children, count, actions }: IDatagridCCProps<T>) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { replace } = useRouter();
@@ -59,7 +59,7 @@ export default function DatagridCC({ defaultRowsPerPage = 5, defaultRowsPerPageO
     setLoading(false);
   }, [children]);
 
-  const headerHeight = 56.4;
+  const headerHeight = 57.34;
   const rowHeight = 40.8;
   const tableMaxHeight = 10 * rowHeight + headerHeight;
 
@@ -90,7 +90,7 @@ export default function DatagridCC({ defaultRowsPerPage = 5, defaultRowsPerPageO
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
           <TableHead>
             <TableRow>
-              {columnscellsProps.map(({ source, caption, columnProps }, i) => (
+              {columnscellsProps.map(({ source, label, columnProps }, i) => (
                 <TableCell
                   key={`column-${i}`}
                   //align={numeric ? 'right' : 'left'}
@@ -106,10 +106,7 @@ export default function DatagridCC({ defaultRowsPerPage = 5, defaultRowsPerPageO
                       onClick={() => toggleSortDirection(source)}
                       aria-label={order && order.column == source ? (order.sortDirection === "desc" ? "Decrescente" : "Ascendente") : ""}
                     >
-                      {caption}
-                      {/* <Box component="span">
-                      {(order && order.column == source) ? order.sortDirection === 'desc' ? 'Decrescente' : 'Ascendente' : ''}
-                    </Box> */}
+                      {label}
                     </TableSortLabel>
                   </Tooltip>
                 </TableCell>

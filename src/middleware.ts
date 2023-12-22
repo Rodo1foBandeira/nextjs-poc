@@ -5,7 +5,10 @@ import type { NextRequest } from 'next/server'
 export function middleware(request: NextRequest) {
   // Clone the request headers and set a new header `x-hello-from-middleware1`
   const requestHeaders = new Headers(request.headers);
-  requestHeaders.set('pathName', request.nextUrl.href.split('?')[0]);
+  let pathname = request.nextUrl.href.split('?')[0]
+  pathname = pathname.substring(pathname.indexOf('://')+3)
+  pathname = pathname.substring(pathname.indexOf('/'))
+  requestHeaders.set('pathname', pathname);
   requestHeaders.set('searchParams', request.nextUrl.href.split('?')[1]);
  
   // You can also set request headers in NextResponse.rewrite

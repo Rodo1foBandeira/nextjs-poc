@@ -11,12 +11,12 @@ export default async function Tickers({ searchParams } : {
     <DatagridSC<Ativo>
       urlPath="/b3api/Ativo"
       columnscellsProps={[
-        { caption: "Id", source: "id" },
-        { caption: "Mercado", source: "mercado" },
-        { caption: "Ticker", source: "ticker" },
+        { label: "Id", source: "id" },
+        { label: "Mercado", source: "mercado" },
+        { label: "Ticker", source: "ticker" },
       ]}
       keySource="ticker"
-      actions={{view: true }}
+      actions={{view: true, delete: true, deleteHref: ({row} : {pathname: string, row: Ativo}) => `/b3api/ativo${row.id}`}}
     />
   );
 }

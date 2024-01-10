@@ -11,11 +11,11 @@ export default async function Tickers({ params }: { params: { ticker: string } }
     <DatagridSC<Ticker>
       urlPath={`/b3api/Ticker('${ticker}')`}
       columnscellsProps={[
-        { label: "Data", source: "data" },
-        { label: "Minima", source: "minima", cellFormat: stringToMoney },
-        { label: "Abertura", source: "abertura", cellFormat: stringToMoney },
-        { label: "Maxima", source: "maxima", cellFormat: stringToMoney },
-        { label: "Fechamento", source: "fechamento", cellFormat: stringToMoney },
+        { label: "Data", source: "data", type: "date" },
+        { label: "Minima", source: "minima", type: "number", cellFormat: stringToMoney },
+        { label: "Abertura", source: "abertura", type: "number", cellFormat: stringToMoney },
+        { label: "Maxima", source: "maxima", type: "number", cellFormat: stringToMoney },
+        { label: "Fechamento", source: "fechamento", type: "number", cellFormat: stringToMoney },
       ]}
       keySource="data"
     />

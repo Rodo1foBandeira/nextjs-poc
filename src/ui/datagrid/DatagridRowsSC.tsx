@@ -66,6 +66,7 @@ export default async function DatagridRowsSC<T>({ columnscellsProps, keySource, 
           //align={numeric ? 'right' : 'left'}
           key={`row-${ri}-column-${ci}`}
           sx={{ padding: 0, paddingLeft: "16px" }}
+          align="center"
           {...cellProps}
         >
           {cellFormat ? cellFormat((row as any)[source]) : cellFormatT ? cellFormatT(row) : (row as any)[source]}

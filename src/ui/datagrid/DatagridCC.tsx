@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, ReactNode, Suspense, useEffect, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useState, useCallback, useRef } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -10,10 +10,14 @@ import TablePagination from "@mui/material/TablePagination";
 import TableRow from "@mui/material/TableRow";
 import IDatagridCell from "./IDatagridCell";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { Box, LinearProgress, Tooltip } from "@mui/material";
+import { IconButton, LinearProgress, Tooltip } from "@mui/material";
 import { SortDirection } from "@mui/material/TableCell";
-import TableSortLabel from "@mui/material/TableSortLabel";
-import { visuallyHidden } from "@mui/utils";
+import DatagridSearch from "./DatagridSearchCC";
+import ImportExportIcon from "@mui/icons-material/ImportExport";
+import ArrowDropDownIcon from "@mui/icons-material/ArrowDropDown";
+import ArrowDropUpIcon from "@mui/icons-material/ArrowDropUp";
+import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
+import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 interface IDatagridCCProps<T> {
   defaultRowsPerPage?: number; // Never pass as state
@@ -35,31 +39,50 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
   const { replace } = useRouter();
   const pathname = usePathname();
 
-  const [order, setOrder] = useState<IOrder>();
-  const [page, setPage] = useState(Number(params.get("page")) || 0);
+  const orderBy = params.get("orderBy");
+  const [order, setOrder] = useState<IOrder>({
+    column: orderBy ? orderBy.split(".")[0] : '',
+    sortDirection: orderBy ? orderBy.split(".")[1] as SortDirection: false,
+  });
+  const _page = Number(params.get("page"));
+  const [page, setPage] = useState(_page ? _page - 1 : 0);
   const [rowsPerPage, setRowsPerPage] = useState(Number(params.get("limit")) || defaultRowsPerPage);
   const [loading, setLoading] = useState(true);
-
+  const [ commutatorRefresh, setCommutatorRefresh ] = useState(false);
+  
   const handleChangePage = (event: unknown, newPage: number) => {
-    setPage(newPage);
-    setLoading(true);
     params.set("page", (newPage + 1).toString());
     replace(`${pathname}?${params.toString()}`);
+    setPage(newPage);
+    setLoading(true);    
   };
 
   const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
+    //params.set("limit", event.target.value);
+    replace(`${pathname}?limit=${event.target.value}`);
     setRowsPerPage(+event.target.value);
     setPage(0);
-    setLoading(true);
-    params.set("limit", event.target.value);
-    replace(`${pathname}?limit=${event.target.value}`);
+    setOrder({ column: "", sortDirection: false });
+    setCommutatorRefresh(x => !x);
+    setLoading(true);    
   };
 
   useEffect(() => {
     setLoading(false);
   }, [children]);
 
-  const headerHeight = 57.34;
+  useEffect(() => {
+    const p = new URLSearchParams(searchParams);
+    if (p.size == 0 && ( page > 0 || order.column || order.sortDirection || rowsPerPage !== defaultRowsPerPage)){
+      setOrder({ column: "", sortDirection: false});
+      setPage(0);
+      setRowsPerPage(defaultRowsPerPage);
+      setCommutatorRefresh(x => !x);
+      console.log(new Date())
+    }
+  }, [searchParams]) // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
+
+  const headerHeight = 99.6;
   const rowHeight = 40.8;
   const tableMaxHeight = 10 * rowHeight + headerHeight;
 
@@ -84,34 +107,42 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
     previous: "Página anterior",
   };
 
+  const SortButton = ({ source }: { source: string }) => {
+    return (
+      <Tooltip title={order && order.column === source ? (order.sortDirection === "desc" ? "Ordenação Decrescente" : "Ordenação Ascendente") : "Clique para ordenar"} arrow>
+        <IconButton onClick={() => toggleSortDirection(source)}>
+          {order && order.column === source ? order.sortDirection === "desc" ? <ArrowUpwardIcon /> : <ArrowDownwardIcon /> : <ImportExportIcon />}
+        </IconButton>
+      </Tooltip>
+    );
+  };
+
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ height: rowsPerPage * rowHeight + headerHeight, maxHeight: tableMaxHeight }}>
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
           <TableHead>
             <TableRow>
-              {columnscellsProps.map(({ source, label, columnProps }, i) => (
+              {columnscellsProps.map(({ source, label, type, columnProps }, i) => (
                 <TableCell
                   key={`column-${i}`}
                   //align={numeric ? 'right' : 'left'}
-                  style={{ backgroundColor: "gray", fontSize: "18px", fontWeight: "bold", position: "sticky", top: 0, zIndex: 1 }}
+                  //backgroundColor: "gray",
+                  sx={{ backgroundColor: "white", fontSize: "18px", fontWeight: "bold", position: "sticky", top: 0, zIndex: 1 }}
                   {...columnProps}
                   //padding={headCell.disablePadding ? 'none' : 'normal'}
                   sortDirection={order && order.column == source ? order.sortDirection : false}
                 >
-                  <Tooltip title={order && order.column === source ? (order.sortDirection === "desc" ? "Ordenação Decrescente" : "Ordenação Ascendente") : "Clique para ordenar"} arrow>
-                    <TableSortLabel
-                      active={order && order.column == source}
-                      direction={order && order.column == source && order.sortDirection ? order.sortDirection : "asc"}
-                      onClick={() => toggleSortDirection(source)}
-                      aria-label={order && order.column == source ? (order.sortDirection === "desc" ? "Decrescente" : "Ascendente") : ""}
-                    >
-                      {label}
-                    </TableSortLabel>
-                  </Tooltip>
+                  <DatagridSearch
+                      key={Number(commutatorRefresh)}
+                    {...{ label, type, source }}
+                    additionalInputProps={{
+                      endAdornment: <SortButton {...{ source }} />,
+                    }}
+                  />
                 </TableCell>
               ))}
-              {actions && <TableCell style={{ backgroundColor: "gray", fontSize: "18px", fontWeight: "bold", position: "sticky", top: 0, zIndex: 1 }}>Ações</TableCell>}
+              {actions && <TableCell sx={{ backgroundColor: "white", fontSize: "18px", fontWeight: "bold", position: "sticky", top: 0, zIndex: 1 }}>Ações</TableCell>}
             </TableRow>
           </TableHead>
           <TableBody>{children}</TableBody>

@@ -41,30 +41,36 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
 
   const orderBy = params.get("orderBy");
   const [order, setOrder] = useState<IOrder>({
-    column: orderBy ? orderBy.split(".")[0] : '',
-    sortDirection: orderBy ? orderBy.split(".")[1] as SortDirection: false,
+    column: orderBy ? orderBy.split(".")[0] : "",
+    sortDirection: orderBy ? (orderBy.split(".")[1] as SortDirection) : false,
   });
   const _page = Number(params.get("page"));
   const [page, setPage] = useState(_page ? _page - 1 : 0);
-  const [rowsPerPage, setRowsPerPage] = useState(Number(params.get("limit")) || defaultRowsPerPage);
+  const paginas = Number(params.get("limit")) || defaultRowsPerPage;
+  if (!defaultRowsPerPageOptions.includes(paginas)) {
+    defaultRowsPerPageOptions.push(paginas);
+    defaultRowsPerPageOptions.sort((a, b) => a - b);
+  }
+  const [rowsPerPage, setRowsPerPage] = useState(paginas);
   const [loading, setLoading] = useState(true);
-  const [ commutatorRefresh, setCommutatorRefresh ] = useState(false);
-  
+
   const handleChangePage = (event: unknown, newPage: number) => {
+    setPage(newPage);
+    setLoading(true);
     params.set("page", (newPage + 1).toString());
     replace(`${pathname}?${params.toString()}`);
-    setPage(newPage);
-    setLoading(true);    
   };
 
   const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
-    //params.set("limit", event.target.value);
-    replace(`${pathname}?limit=${event.target.value}`);
     setRowsPerPage(+event.target.value);
-    setPage(0);
-    setOrder({ column: "", sortDirection: false });
-    setCommutatorRefresh(x => !x);
-    setLoading(true);    
+    setLoading(true);
+    params.set("limit", event.target.value);
+    const paginas = Math.ceil(count / +event.target.value);
+    if (page > paginas) {
+      setPage(paginas - 1);
+      params.set("page", paginas.toString());
+    }
+    replace(`${pathname}?${params.toString()}`);
   };
 
   useEffect(() => {
@@ -73,14 +79,13 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
 
   useEffect(() => {
     const p = new URLSearchParams(searchParams);
-    if (p.size == 0 && ( page > 0 || order.column || order.sortDirection || rowsPerPage !== defaultRowsPerPage)){
-      setOrder({ column: "", sortDirection: false});
+    if (p.size == 0 && (page > 0 || order.column || order.sortDirection || rowsPerPage !== defaultRowsPerPage)) {
+      setOrder({ column: "", sortDirection: false });
       setPage(0);
       setRowsPerPage(defaultRowsPerPage);
-      setCommutatorRefresh(x => !x);
-      console.log(new Date())
+      console.log(new Date());
     }
-  }, [searchParams]) // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
+  }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
 
   const headerHeight = 99.6;
   const rowHeight = 40.8;
@@ -134,7 +139,6 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
                   sortDirection={order && order.column == source ? order.sortDirection : false}
                 >
                   <DatagridSearch
-                      key={Number(commutatorRefresh)}
                     {...{ label, type, source }}
                     additionalInputProps={{
                       endAdornment: <SortButton {...{ source }} />,

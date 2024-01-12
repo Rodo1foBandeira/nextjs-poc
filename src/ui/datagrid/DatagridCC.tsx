@@ -21,7 +21,7 @@ import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
 
 interface IDatagridCCProps<T> {
   defaultRowsPerPage?: number; // Never pass as state
-  defaultRowsPerPageOptions?: (number | { label: string; value: number })[]; // Never pass as state
+  defaultRowsPerPageOptions?: number[]; // Never pass as state
   columnscellsProps: IDatagridCell<T>[];
   actions?: boolean;
   children: ReactNode;

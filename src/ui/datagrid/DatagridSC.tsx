@@ -11,7 +11,7 @@ interface IDatagridSCProps<T> {
   keySource: string;
   actions?: IDatagridAcions<T>;
   defaultRowsPerPage?: number; // Never pass as state
-  defaultRowsPerPageOptions?: (number | { label: string; value: number })[]; // Never pass as state
+  defaultRowsPerPageOptions?: number[]; // Never pass as state
 }
 
 export const revalidate = 1;

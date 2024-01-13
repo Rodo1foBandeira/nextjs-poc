@@ -139,7 +139,7 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
                   sortDirection={order && order.column == source ? order.sortDirection : false}
                 >
                   <DatagridSearch
-                    {...{ label, type, source }}
+                    {...{ label, type, source, setLoading }}
                     additionalInputProps={{
                       endAdornment: <SortButton {...{ source }} />,
                     }}

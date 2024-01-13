@@ -5,4 +5,5 @@ export interface IDatagridSearchProps {
     additionalInputProps?: InputProps;
     type: "string" | "number" | "date";
     source: string;
+    setLoading: (v: boolean) => void;
   }

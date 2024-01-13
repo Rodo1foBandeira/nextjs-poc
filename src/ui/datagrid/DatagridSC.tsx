@@ -4,6 +4,8 @@ import DatagridRowsSC from "./DatagridRowsSC";
 import IDatagridCell from "./IDatagridCell";
 import IDatagridResponse from "./IDatagridResponse";
 import IDatagridAcions from "./IDatagridActions";
+import { parseSearchParams } from "@/lib/utils/queryParameters";
+import { Filter, all_conditions } from "./Conditions";
 
 interface IDatagridSCProps<T> {
   urlPath: string;
@@ -26,6 +28,15 @@ export default async function DatagridSC<T>({ urlPath, columnscellsProps, keySou
   const orderBy = searchParams.get('orderBy');
   if (orderBy){
     url += `&order_by=${orderBy}`
+  }
+  if (searchParams.toString().indexOf('filters.') > -1){
+    const filters = parseSearchParams<Filter>(searchParams.toString(), /^filters\.(\w+)\.(\w+)$/);
+    const func_filters = Object.keys(filters).map(key => {
+      const operator = all_conditions.find(x => x.operator === filters[key].operator);
+      const value = Number(filters[key].value) || filters[key].value; 
+      return 'func_filters=' + operator?.query(key, value)
+    }).join('&')
+    url += '&' + func_filters;
   }
   const reponse = await fetch(url, {
     //cache: "no-store",

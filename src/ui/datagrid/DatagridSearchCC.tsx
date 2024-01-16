@@ -1,11 +1,12 @@
-import { TextField, Grid } from "@mui/material";
-
-import { useState, MouseEvent, ChangeEvent, useRef, useEffect } from "react";
+import { TextField } from "@mui/material";
+import { useState, ChangeEvent, useRef, useEffect } from "react";
 import { useSearchParams } from "next/navigation";
 import DatagridSearchOperator from "./DatagridSearchOperator";
 import { IDatagridSearchProps } from "./IDatagridSearchProps";
+import DatagridColumn from "./DatagridColumn";
+import DatagridSort from "./DatagridSort";
 
-export default function DatagridSearch({ label, additionalInputProps, type, source, setLoading }: IDatagridSearchProps) {
+export default function DatagridSearch({ label, type, source, setLoading }: IDatagridSearchProps) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
@@ -15,8 +16,8 @@ export default function DatagridSearch({ label, additionalInputProps, type, sour
   useEffect(() => {
     const p = new URLSearchParams(searchParams);
     if (p.size == 0) {
-      setValue('');
-      setDelayedValue('');
+      setValue("");
+      setDelayedValue("");
     }
   }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
 
@@ -34,21 +35,18 @@ export default function DatagridSearch({ label, additionalInputProps, type, sour
   };
 
   return (
-    <Grid container direction="column" alignItems="center">
-      <Grid item>{label}</Grid>
-      <Grid item>
-        <TextField
-          variant="outlined"
-          size="small"
-          type={type}
-          value={value}
-          onChange={handleChange}
-          InputProps={{
-            startAdornment: <DatagridSearchOperator {...{ type, source, setLoading }} value={delayedValue} />,
-            ...additionalInputProps,
-          }}
-        />
-      </Grid>
-    </Grid>
+    <DatagridColumn {...{ label }}>
+      <TextField
+        variant="outlined"
+        size="small"
+        type={type}
+        value={value}
+        onChange={handleChange}
+        InputProps={{
+          startAdornment: <DatagridSearchOperator {...{ type, source, setLoading }} value={delayedValue} />,
+          endAdornment: <DatagridSort {...{ source, setLoading }} />,
+        }}
+      />
+    </DatagridColumn>
   );
 }

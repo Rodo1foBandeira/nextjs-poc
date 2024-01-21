@@ -1,5 +1,5 @@
 "use client";
-import { ChangeEvent, ReactNode, useEffect, useState } from "react";
+import { ChangeEvent, ReactNode, useEffect, useRef, useState } from "react";
 import Paper from "@mui/material/Paper";
 import Table from "@mui/material/Table";
 import TableBody from "@mui/material/TableBody";
@@ -12,6 +12,8 @@ import IDatagridCell from "./IDatagridCell";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { LinearProgress } from "@mui/material";
 import DatagridSearch from "./DatagridSearchCC";
+import DatagridLookupSearch from "./DatagridLookupSearch";
+import { useDatagridContext } from "./DatagridContext";
 
 interface IDatagridCCProps<T> {
   defaultRowsPerPage?: number; // Never pass as state
@@ -27,17 +29,14 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
   const params = new URLSearchParams(searchParams);
   const { replace } = useRouter();
   const pathname = usePathname();
+  const { page, setPage, loading, setLoading } = useDatagridContext();
 
-  
-  const _page = Number(params.get("page"));
-  const [page, setPage] = useState(_page ? _page - 1 : 0);
-  const paginas = Number(params.get("limit")) || defaultRowsPerPage;
-  if (!defaultRowsPerPageOptions.includes(paginas)) {
-    defaultRowsPerPageOptions.push(paginas);
+  const queryLimitOrDefault = Number(params.get("limit")) || defaultRowsPerPage;
+  if (!defaultRowsPerPageOptions.includes(queryLimitOrDefault)) {
+    defaultRowsPerPageOptions.push(queryLimitOrDefault);
     defaultRowsPerPageOptions.sort((a, b) => a - b);
   }
-  const [rowsPerPage, setRowsPerPage] = useState(paginas);
-  const [loading, setLoading] = useState(true);
+  const [rowsPerPage, setRowsPerPage] = useState(queryLimitOrDefault);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
@@ -47,27 +46,26 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
   };
 
   const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
-    setRowsPerPage(+event.target.value);
+    setRowsPerPage(+event.target.value);    
     setLoading(true);
-    params.set("limit", event.target.value);
-    const paginas = Math.ceil(count / +event.target.value);
-    if (page > paginas) {
-      setPage(paginas - 1);
-      params.set("page", paginas.toString());
-    }
+    setPage(0);
+    params.set("page", "1");
+    params.set("limit", event.target.value);    
     replace(`${pathname}?${params.toString()}`);
   };
-
+ 
   useEffect(() => {
     setLoading(false);
   }, [children]);
 
-  // Problema: filtrar, clicar no Link Ticker, fica carregando
+  // Problem: filter any, click to Link Ticker, stay loading
   useEffect(() => {
     const p = new URLSearchParams(searchParams);
-    if (p.size == 0 && (page > 0 || rowsPerPage !== defaultRowsPerPage)) {
-      setPage(0);
-      setRowsPerPage(defaultRowsPerPage);
+    if (p.size == 0) {
+      if (page > 0 || rowsPerPage !== defaultRowsPerPage) {
+        setPage(0);
+        setRowsPerPage(defaultRowsPerPage);
+      }      
     }
   }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
 
@@ -82,24 +80,24 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
     previous: "Página anterior",
   };
 
-
   return (
     <Paper sx={{ width: "100%", overflow: "hidden" }}>
       <TableContainer sx={{ height: rowsPerPage * rowHeight + headerHeight, maxHeight: tableMaxHeight }}>
         <Table sx={{ minWidth: 500 }} aria-label="custom pagination table">
           <TableHead>
             <TableRow>
-              {columnscellsProps.map(({ source, label, type, columnProps }, i) => (
+              {columnscellsProps.map(({ source, label, type, columnProps, lookup }, i) => (
                 <TableCell
                   key={`column-${i}`}
                   //align={numeric ? 'right' : 'left'}
                   //backgroundColor: "gray",
                   sx={{ backgroundColor: "white", fontSize: "18px", fontWeight: "bold", position: "sticky", top: 0, zIndex: 1 }}
-                  {...columnProps}                  
+                  {...columnProps}
                 >
-                  <DatagridSearch
-                    {...{ label, type, source, setLoading }}
-                  />
+                  {
+                    lookup ?
+                      <DatagridLookupSearch {...{ label, type, source, lookup }} /> :
+                      <DatagridSearch {...{ label, type, source }} />}
                 </TableCell>
               ))}
               {actions && <TableCell sx={{ backgroundColor: "white", fontSize: "18px", fontWeight: "bold", position: "sticky", top: 0, zIndex: 1 }}>Ações</TableCell>}

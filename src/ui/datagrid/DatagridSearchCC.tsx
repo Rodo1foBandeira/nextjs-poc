@@ -6,7 +6,7 @@ import { IDatagridSearchProps } from "./IDatagridSearchProps";
 import DatagridColumn from "./DatagridColumn";
 import DatagridSort from "./DatagridSort";
 
-export default function DatagridSearch({ label, type, source, setLoading }: IDatagridSearchProps) {
+export default function DatagridSearch({ label, type, source }: IDatagridSearchProps) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
 
@@ -43,8 +43,8 @@ export default function DatagridSearch({ label, type, source, setLoading }: IDat
         value={value}
         onChange={handleChange}
         InputProps={{
-          startAdornment: <DatagridSearchOperator {...{ type, source, setLoading }} value={delayedValue} />,
-          endAdornment: <DatagridSort {...{ source, setLoading }} />,
+          startAdornment: <DatagridSearchOperator {...{ type, source }} value={delayedValue} />,
+          endAdornment: <DatagridSort {...{ source }} />,
         }}
       />
     </DatagridColumn>

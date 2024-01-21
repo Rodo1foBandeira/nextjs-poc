@@ -3,21 +3,23 @@ import { useState, MouseEvent, useEffect, useRef } from "react";
 import IconButton from "@mui/material/IconButton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Condition, conditions } from "./Conditions";
+import { useDatagridContext } from "./DatagridContext";
 
 interface IDatagridSearchOperator {
   source: string;
   type: "string" | "number" | "date";
   value: string | number;
-  setLoading: (v:boolean) => void;
 }
 
-export default function DatagridSearchOperator({ source, type, value, setLoading }: IDatagridSearchOperator) {
+export default function DatagridSearchOperator({ source, type, value }: IDatagridSearchOperator) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const searchParams = useSearchParams();
     const params = new URLSearchParams(searchParams);
     const { replace } = useRouter();
     const pathname = usePathname();
+    const { setLoading, setPage } = useDatagridContext();
+
     const operator = params.get(`filters.${source}.operator`)
     const conditionQueryOrDefault = operator ? conditions[type].find(x => x.operator === operator) as Condition : conditions.string[0]
     const [condition, setCondition] = useState<Condition>(conditionQueryOrDefault);
@@ -42,7 +44,9 @@ export default function DatagridSearchOperator({ source, type, value, setLoading
       const params = new URLSearchParams(searchParams);
       if (value) {
         params.set(`filters.${source}.operator`, condition.operator);
-        params.set(`filters.${source}.value`, value.toString());        
+        params.set(`filters.${source}.value`, value.toString());
+        setPage(0);
+        params.set("page", "1");
       } else {
         params.delete(`filters.${source}.operator`)
         params.delete(`filters.${source}.value`)
@@ -52,7 +56,7 @@ export default function DatagridSearchOperator({ source, type, value, setLoading
         oldParams.current = params.toString();
         setLoading(true)
         replace(`${pathname}?${params.toString()}`);
-      }      
+      }
     }, [searchParams, value, condition, condition.operator]);
   
     return (

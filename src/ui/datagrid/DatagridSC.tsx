@@ -6,6 +6,7 @@ import IDatagridResponse from "./IDatagridResponse";
 import IDatagridAcions from "./IDatagridActions";
 import { parseSearchParams } from "@/lib/utils/queryParameters";
 import { Filter, all_conditions } from "./Conditions";
+import { DatagridContextProvider } from "./DatagridContext";
 
 interface IDatagridSCProps<T> {
   urlPath: string;
@@ -47,17 +48,19 @@ export default async function DatagridSC<T>({ urlPath, columnscellsProps, keySou
   const { count, data } = (await reponse.json()) as IDatagridResponse<T>;
 
   return (
-    <DatagridCC<T>
-      {...{
-        columnscellsProps,
-        count,
-        keySource,
-        defaultRowsPerPage,
-        defaultRowsPerPageOptions,
-      }}
-      actions={actions != undefined}
-    >
-      <DatagridRowsSC<T> {...{ columnscellsProps, data, keySource, actions, urlPath }} />
-    </DatagridCC>
+    <DatagridContextProvider>
+      <DatagridCC<T>
+        {...{
+          columnscellsProps,
+          count,
+          keySource,
+          defaultRowsPerPage,
+          defaultRowsPerPageOptions,
+        }}
+        actions={actions != undefined}
+      >
+        <DatagridRowsSC<T> {...{ columnscellsProps, data, keySource, actions, urlPath }} />
+      </DatagridCC>
+    </DatagridContextProvider>    
   );
 }

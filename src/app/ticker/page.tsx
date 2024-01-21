@@ -7,7 +7,7 @@ export default async function Tickers() {
       urlPath="/b3api/Ativo"
       columnscellsProps={[
         { label: "Id", source: "id", type: "number" },
-        { label: "Mercado", source: "mercado", type: "string" },
+        { label: "Mercado", source: "mercado", type: "string", lookup: [ { value: "B3", label: "Ibov"}, { value: "Nasdaq", label: "NDX"}] },
         { label: "Ticker", source: "ticker", type: "string" },
       ]}
       keySource="ticker"

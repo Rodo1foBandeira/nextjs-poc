@@ -5,17 +5,19 @@ import { SortDirection } from "@mui/material/TableCell";
 import ImportExportIcon from "@mui/icons-material/ImportExport";
 import ArrowDownwardIcon from "@mui/icons-material/ArrowDownward";
 import ArrowUpwardIcon from "@mui/icons-material/ArrowUpward";
+import { useDatagridContext } from "./DatagridContext";
 
 interface IOrder {
   column: string;
   sortDirection: SortDirection;
 }
 
-export default function DatagridSort({ source, setLoading }: { source: string, setLoading: (v: boolean) => void }) {
+export default function DatagridSort({ source }: { source: string }) {
   const searchParams = useSearchParams();
   const params = new URLSearchParams(searchParams);
   const { replace } = useRouter();
   const pathname = usePathname();
+  const { setLoading } = useDatagridContext();
 
   const orderBy = params.get("orderBy");
   const [order, setOrder] = useState<IOrder>({

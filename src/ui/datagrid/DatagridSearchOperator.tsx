@@ -1,5 +1,5 @@
 import { Menu, MenuItem, Tooltip } from "@mui/material";
-import { useState, MouseEvent, useEffect, useRef } from "react";
+import { useState, MouseEvent, useEffect, useRef, Dispatch, SetStateAction } from "react";
 import IconButton from "@mui/material/IconButton";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { Condition, conditions } from "./Conditions";
@@ -9,23 +9,22 @@ interface IDatagridSearchOperator {
   source: string;
   type: "string" | "number" | "date";
   value: string | number;
+  setFocus: () => void
 }
 
-export default function DatagridSearchOperator({ source, type, value }: IDatagridSearchOperator) {
+export default function DatagridSearchOperator({ source, type, value, setFocus }: IDatagridSearchOperator) {
     const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
     const open = Boolean(anchorEl);
     const searchParams = useSearchParams();
-    const params = new URLSearchParams(searchParams);
     const { replace } = useRouter();
     const pathname = usePathname();
     const { setLoading, setPage } = useDatagridContext();
-
-    const operator = params.get(`filters.${source}.operator`)
-    const conditionQueryOrDefault = operator ? conditions[type].find(x => x.operator === operator) as Condition : conditions.string[0]
-    const [condition, setCondition] = useState<Condition>(conditionQueryOrDefault);
+    
+    const [condition, setCondition] = useState<Condition>(conditions.string[0]);
     
     const handleClick = (event: MouseEvent<HTMLButtonElement>) => {
       setAnchorEl(event.currentTarget);
+      setFocus();
     };
     const handleClose = (condition: Condition) => {
       setCondition(condition);
@@ -33,9 +32,13 @@ export default function DatagridSearchOperator({ source, type, value }: IDatagri
     };
 
     useEffect(() => {
-      const p = new URLSearchParams(searchParams);
-      if (p.size == 0) {
+      const params = new URLSearchParams(searchParams);
+      if (params.size == 0) {
         setCondition(conditions.string[0]);
+      } else {
+        const operator = params.get(`filters.${source}.operator`)
+        if (operator)
+          setCondition(conditions[type].find(x => x.operator === operator) as Condition);
       }
     }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
   

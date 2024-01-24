@@ -26,21 +26,17 @@ interface IDatagridCCProps<T> {
 
 export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPageOptions = [5, 10, 20], columnscellsProps, children, count, actions }: IDatagridCCProps<T>) {
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
+  
   const { replace } = useRouter();
   const pathname = usePathname();
   const { page, setPage, loading, setLoading } = useDatagridContext();
-
-  const queryLimitOrDefault = Number(params.get("limit")) || defaultRowsPerPage;
-  if (!defaultRowsPerPageOptions.includes(queryLimitOrDefault)) {
-    defaultRowsPerPageOptions.push(queryLimitOrDefault);
-    defaultRowsPerPageOptions.sort((a, b) => a - b);
-  }
-  const [rowsPerPage, setRowsPerPage] = useState(queryLimitOrDefault);
+  
+  const [rowsPerPage, setRowsPerPage] = useState(defaultRowsPerPage);
 
   const handleChangePage = (event: unknown, newPage: number) => {
     setPage(newPage);
     setLoading(true);
+    const params = new URLSearchParams(searchParams);
     params.set("page", (newPage + 1).toString());
     replace(`${pathname}?${params.toString()}`);
   };
@@ -49,6 +45,7 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
     setRowsPerPage(+event.target.value);    
     setLoading(true);
     setPage(0);
+    const params = new URLSearchParams(searchParams);
     params.set("page", "1");
     params.set("limit", event.target.value);    
     replace(`${pathname}?${params.toString()}`);
@@ -60,12 +57,18 @@ export default function DatagridCC<T>({ defaultRowsPerPage = 5, defaultRowsPerPa
 
   // Problem: filter any, click to Link Ticker, stay loading
   useEffect(() => {
-    const p = new URLSearchParams(searchParams);
-    if (p.size == 0) {
+    const params = new URLSearchParams(searchParams);
+    if (params.size == 0) {
       if (page > 0 || rowsPerPage !== defaultRowsPerPage) {
         setPage(0);
         setRowsPerPage(defaultRowsPerPage);
       }      
+    } else {
+      const limit = Number(params.get("limit"));
+      if (limit && !defaultRowsPerPageOptions.includes(limit)) {
+        defaultRowsPerPageOptions.push(limit);
+        defaultRowsPerPageOptions.sort((a, b) => a - b);
+      }
     }
   }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
 

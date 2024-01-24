@@ -8,16 +8,21 @@ import DatagridSort from "./DatagridSort";
 
 export default function DatagridSearch({ label, type, source }: IDatagridSearchProps) {
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
 
-  const [value, setValue] = useState<string | number>(params.get(`filters.${source}.value`) || "");
-  const [delayedValue, setDelayedValue] = useState<string | number>(params.get(`filters.${source}.value`) || "");
+  const [value, setValue] = useState<string | number>("");
+  const [delayedValue, setDelayedValue] = useState<string | number>("");
 
   useEffect(() => {
-    const p = new URLSearchParams(searchParams);
-    if (p.size == 0) {
+    const params = new URLSearchParams(searchParams);
+    if (params.size == 0) {
       setValue("");
       setDelayedValue("");
+    } else {
+      const filterValue = params.get(`filters.${source}.value`);
+      if (filterValue){
+        setValue(filterValue);
+        setDelayedValue(filterValue);
+      }
     }
   }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
 
@@ -34,16 +39,22 @@ export default function DatagridSearch({ label, type, source }: IDatagridSearchP
     }, 2000);
   };
 
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const setFocus = () => {
+    if (inputRef.current) {
+      inputRef.current.focus();
+    }
+  };
+  
   return (
     <DatagridColumn {...{ label }}>
       <TextField
         variant="outlined"
         size="small"
-        type={type}
-        value={value}
-        onChange={handleChange}
+        {...{type, value, inputRef}}
+        onChange={handleChange}        
         InputProps={{
-          startAdornment: <DatagridSearchOperator {...{ type, source }} value={delayedValue} />,
+          startAdornment: <DatagridSearchOperator {...{ type, source, setFocus }} value={delayedValue} />,
           endAdornment: <DatagridSort {...{ source }} />,
         }}
       />

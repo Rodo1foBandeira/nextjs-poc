@@ -15,22 +15,26 @@ interface IDatagridLookupSearch {
 
 export default function DatagridLookupSearch({ label, source, lookup }: IDatagridLookupSearch) {
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
   const pathname = usePathname();
   const { replace } = useRouter();
   const { setLoading, setPage } = useDatagridContext();
 
-  const [value, setValue] = useState<string>(params.get(`filters.${source}.value`) || "");
+  const [value, setValue] = useState("");
 
   useEffect(() => {
-    const p = new URLSearchParams(searchParams);
-    if (p.size == 0) {
+    const params = new URLSearchParams(searchParams);
+    if (params.size == 0) {
       setValue("");
+    } else {
+      const filterValue = params.get(`filters.${source}.value`);
+      if (filterValue)
+        setValue(filterValue);
     }
   }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
 
   const handleChange = (event: ChangeEvent<HTMLInputElement>) => {
     setValue(event.target.value);
+    const params = new URLSearchParams(searchParams);
     if (event.target.value) {
       params.set(`filters.${source}.operator`, '==');
       params.set(`filters.${source}.value`, event.target.value);
@@ -60,7 +64,7 @@ export default function DatagridLookupSearch({ label, source, lookup }: IDatagri
         }}
       >
         <MenuItem key={source + "menuItem"} value="">
-            Sem filtro
+            Limpar
           </MenuItem>
         {lookup.map(({ value, label }, i) => (
           <MenuItem key={source + "menuItem-" + i} value={value}>

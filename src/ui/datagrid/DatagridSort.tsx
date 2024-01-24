@@ -14,22 +14,27 @@ interface IOrder {
 
 export default function DatagridSort({ source }: { source: string }) {
   const searchParams = useSearchParams();
-  const params = new URLSearchParams(searchParams);
   const { replace } = useRouter();
   const pathname = usePathname();
   const { setLoading } = useDatagridContext();
 
-  const orderBy = params.get("orderBy");
   const [order, setOrder] = useState<IOrder>({
-    column: orderBy ? orderBy.split(".")[0] : "",
-    sortDirection: orderBy ? (orderBy.split(".")[1] as SortDirection) : false,
+    column: "",
+    sortDirection: false,
   });
 
   // Problema: filtrar, clicar no Link Ticker, fica carregando
   useEffect(() => {
-    const p = new URLSearchParams(searchParams);
-    if (p.size == 0 && (order.column || order.sortDirection)) {
+    const params = new URLSearchParams(searchParams);
+    if (params.size == 0 && (order.column || order.sortDirection)) {
       setOrder({ column: "", sortDirection: false });
+    } else {
+      const orderBy = params.get("orderBy");
+      if (orderBy)
+        setOrder({
+          column: orderBy.split(".")[0],
+          sortDirection: orderBy.split(".")[1] as SortDirection
+        });
     }
   }, [searchParams]); // Não escutar outras variaveis de estado, pois searchParams sempre atrasado
 
@@ -43,6 +48,7 @@ export default function DatagridSort({ source }: { source: string }) {
       setOrder({ column, sortDirection });
     }
     setLoading(true);
+    const params = new URLSearchParams(searchParams);
     params.set("orderBy", `${column}.${sortDirection}`);
     replace(`${pathname}?${params.toString()}`);
   };

@@ -18,3 +18,11 @@ export const parseSearchParams = <T>(searchParams: string, match: RegExp): T => 
 
   return obj as T;
 };
+
+export function filterSearchParamsByPrefix(url: string, prefix: string) {
+  const urlSearchParams = new URLSearchParams(url);
+  const filteredParams = new URLSearchParams(
+    Array.from(urlSearchParams.entries()).filter(([key, value]) => key.startsWith(prefix))
+  );
+  return filteredParams;
+}

@@ -4,10 +4,11 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { ChangeEvent, useEffect } from "react";
 
 interface ITablePaginatioProps extends Omit<TablePaginationOwnProps, "onPageChange" | "page" | "rowsPerPage" >{
-    defaultRowsPerPage?: number;
+  tableId:string;  
+  defaultRowsPerPage?: number;
 }
 
-export default function TablePagination({ id, count, defaultRowsPerPage = 5, ...props } : ITablePaginatioProps) {
+export default function TablePagination({ tableId, count, defaultRowsPerPage = 5, ...props } : ITablePaginatioProps) {
   const searchParams = useSearchParams();
 
   const { replace } = useRouter();
@@ -15,16 +16,16 @@ export default function TablePagination({ id, count, defaultRowsPerPage = 5, ...
 
   const handleChangePage = (event: unknown, newPage: number) => {
     const params = new URLSearchParams(searchParams);
-    params.set(id + "_page", (newPage + 1).toString());
-    params.set(id + "_last_count", count.toString());
+    params.set(tableId + "_page", (newPage + 1).toString());
+    params.set(tableId + "_last_count", count.toString());
     replace(`${pathname}?${params.toString()}`);
   };
 
   const handleChangeRowsPerPage = (event: ChangeEvent<HTMLInputElement>) => {
     const params = new URLSearchParams(searchParams);
-    params.set(id + "_page", "1");
-    params.set(id + "_limit", event.target.value);
-    params.set(id + "_last_count", count.toString());
+    params.set(tableId + "_page", "1");
+    params.set(tableId + "_limit", event.target.value);
+    params.set(tableId + "_last_count", count.toString());
     replace(`${pathname}?${params.toString()}`);
   };
 
@@ -36,8 +37,8 @@ export default function TablePagination({ id, count, defaultRowsPerPage = 5, ...
   };
 
   const params = new URLSearchParams(searchParams);
-  const rowsPerPage = params.get(id + "_limit") ? Number(params.get(id + "_limit")) : defaultRowsPerPage;
-  const page = params.get(id + "_page") ? Number(params.get(id + "_page"))-1 : 0;
+  const rowsPerPage = params.get(tableId + "_limit") ? Number(params.get(tableId + "_limit")) : defaultRowsPerPage;
+  const page = params.get(tableId + "_page") ? Number(params.get(tableId + "_page"))-1 : 0;
 
   return (
     <MuiTablePagination

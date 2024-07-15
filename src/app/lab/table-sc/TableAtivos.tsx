@@ -9,6 +9,8 @@ import TablePagination from "@/ui/tables/TablePagination";
 import Table from "@/ui/tables/Table";
 import Skeleton from "@/ui/utils/Skeleton";
 import { filterSearchParamsByPrefix } from "@/lib/utils/queryParameters";
+import Sort from "@/ui/tables/Sort";
+import TextFieldFilter from "@/ui/tables/TextFieldFilter";
 
 export default async function TableAtivos() {
   const table: ITableData = { id: "table1", urlPath: "/b3api/Ativo" };
@@ -21,15 +23,15 @@ export default async function TableAtivos() {
       <h1>Ativos</h1>
       <Table
         paginacao={
-          <Suspense key={searchParams.toString()} fallback={<TablePagination id={table.id} disabled count={lastCount} />}>
+          <Suspense key={searchParams.toString()} fallback={<TablePagination tableId={table.id} disabled count={lastCount} />}>
             <TablePaginationSC tableDataProps={{ ...table }} />
           </Suspense>
         }
       >
         <TableHead>
           <TableRow>
-            <TableCell>Id</TableCell>
-            <TableCell>Ticker</TableCell>
+            <TableCell><TextFieldFilter type="number" label="Id" tableId={table.id} source="id" /></TableCell>
+            <TableCell><TextFieldFilter type="string" label="Ticker" tableId={table.id} source="ticker" /></TableCell>
           </TableRow>
         </TableHead>
         <Suspense key={searchParams.toString()} fallback={<Skeleton sx={{ width: "100vh" }} height={52.81} repeat={5} />}>

@@ -94,6 +94,7 @@ export default function PersistentDrawerLeft({
   const menu = [
     { title: 'Home', path: '/', icon:  <HomeIcon />},
     { title: 'Tickers', path: '/ticker', icon: <TimelineIcon /> },
+    { title: '2 TSC', path: '/lab/table-sc', icon: <TimelineIcon /> },
   ]
   
   return (

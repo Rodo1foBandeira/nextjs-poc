@@ -9,6 +9,7 @@ import Table from "@/ui/tables/Table";
 import Skeleton from "@/ui/utils/Skeleton";
 import ITicker from "@/models/ITicker";
 import { filterSearchParamsByPrefix } from "@/lib/utils/queryParameters";
+import TextFieldFilter from "@/ui/tables/TextFieldFilter";
 
 export default async function TablePetr4() {
   const table: ITableData = { id: "table2", urlPath: "/b3api/Ticker('PETR4')" };
@@ -21,15 +22,15 @@ export default async function TablePetr4() {
       <h1>PETR4</h1>
       <Table
         paginacao={
-          <Suspense key={searchParams.toString()} fallback={<TablePagination id={table.id} disabled count={lastCount} />}>
+          <Suspense key={searchParams.toString()} fallback={<TablePagination tableId={table.id} disabled count={lastCount} />}>
             <TablePaginationSC tableDataProps={{ ...table }} />
           </Suspense>
         }
       >
         <TableHead>
           <TableRow>
-            <TableCell>Data</TableCell>
-            <TableCell>Fechamento</TableCell>
+            <TableCell><TextFieldFilter type="date" label="Data" tableId={table.id} source="data" /></TableCell>
+            <TableCell><TextFieldFilter type="number" label="Fechamento" tableId={table.id} source="fechamento" /></TableCell>
           </TableRow>
         </TableHead>
         <Suspense key={searchParams.toString()} fallback={<Skeleton sx={{ width: "100vh" }} height={52.81} repeat={5} />}>
